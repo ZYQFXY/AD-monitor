@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+{% block title %}数据 - {{ cat.name }}{% endblock %}
+{% block content %}
+<h2>{{ cat.name }} · 广告数据</h2>
+
+{% if msg == "refreshed" %}<div class="msg msg-ok">刷新完成，数据已更新</div>
+{% elif msg == "error" %}<div class="msg msg-err">刷新失败，请检查日志</div>
+{% elif msg and msg.startswith("cooldown_") %}<div class="msg msg-warn">冷却中，请 {{ msg.split("_")[1] }} 秒后再试</div>
+{% endif %}
+
+<div style="margin-bottom:16px;display:flex;gap:12px;align-items:center">
+  <form method="post" action="/categories/{{ cat.id }}/refresh">
+    <button class="btn btn-success" {% if cooldown_remaining > 0 %}disabled title="冷却中（{{ cooldown_remaining }}s）"{% endif %}>
+      立即刷新{% if cooldown_remaining > 0 %}（{{ cooldown_remaining }}s）{% endif %}
+    </button>
+  </form>
+  <a href="/categories/{{ cat.id }}/campaigns" class="btn btn-secondary">管理绑定</a>
+  <span style="color:#888;font-size:12px">数据每小时自动刷新，或手动刷新（5 分钟冷却）</span>
+</div>
+
+<h3 style="margin-top:24px">广告组（Ad Set）数据</h3>
+{% if adsets %}
+<table>
+  <thead><tr>
+    <th>广告组 ID</th><th>名称</th><th>平台</th>
+    <th>今日消耗(¥)</th><th>ROAS</th><th>日预算(¥)</th><th>剩余预算(¥)</th><th>状态</th>
+  </tr></thead>
+  <tbody>
+  {% for a in adsets %}
+  {% set warn = a.spend >= cat.min_spend_trigger and a.roas <= cat.min_roas %}
+  {% set good = a.roas >= cat.scale_roas %}
+  {% set low_budget = a.daily_budget > 0 and a.remaining_budget <= a.daily_budget * 0.1 %}
+  <tr style="{{ 'background:#fff8e1' if low_budget else ('background:#ffebee' if warn else ('background:#e8f5e9' if good else '')) }}">
+    <td><code>{{ a.adset_id }}</code></td>
+    <td>{{ a.name }}</td>
+    <td>{{ a.platform }}</td>
+    <td>{{ "%.2f"|format(a.spend) }}</td>
+    <td>{{ "%.2f"|format(a.roas) }}</td>
+    <td>{{ "%.2f"|format(a.daily_budget) }}</td>
+    <td>{{ "%.2f"|format(a.remaining_budget) }}</td>
+    <td>
+      {% if warn %}⚠ 高消耗低ROAS
+      {% elif good %}✓ 高ROAS可放量
+      {% elif low_budget %}⚠ 预算告急
+      {% else %}—{% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p style="color:#777">暂无数据，请先绑定 Campaign 并刷新。</p>
+{% endif %}
+
+<h3 style="margin-top:24px">素材（Ad）CTR 数据</h3>
+{% if ads %}
+<table>
+  <thead><tr>
+    <th>素材 ID</th><th>名称</th><th>平台</th>
+    <th>CTR</th><th>展示量</th><th>状态</th>
+  </tr></thead>
+  <tbody>
+  {% for a in ads %}
+  {% set low = a.ctr <= cat.ctr_threshold and a.impressions >= cat.ctr_min_impressions %}
+  <tr style="{{ 'background:#ffebee' if low else '' }}">
+    <td><code>{{ a.ad_id }}</code></td>
+    <td>{{ a.name }}</td>
+    <td>{{ a.platform }}</td>
+    <td>{{ "%.2f%%"|format(a.ctr*100) }}</td>
+    <td>{{ "{:,}".format(a.impressions) }}</td>
+    <td>{% if low %}⚠ 低CTR{% else %}—{% endif %}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p style="color:#777">暂无素材数据。</p>
+{% endif %}
+{% endblock %}

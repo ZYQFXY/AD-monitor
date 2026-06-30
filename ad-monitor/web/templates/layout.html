@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}广告监控系统{% endblock %}</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif;font-size:14px}
+    nav{background:#1565c0;color:#fff;padding:12px 24px;display:flex;gap:20px;align-items:center}
+    nav a{color:#fff;text-decoration:none;font-weight:500}nav a:hover{text-decoration:underline}
+    nav span{margin-left:auto;font-size:12px;opacity:.8}
+    main{padding:24px;max-width:1200px}
+    h2{margin-top:0}
+    table{border-collapse:collapse;width:100%;margin-top:12px}
+    th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}th{background:#f5f5f5}
+    tr:hover td{background:#fafafa}
+    .btn{display:inline-block;padding:5px 12px;border:none;border-radius:4px;cursor:pointer;font-size:13px;text-decoration:none}
+    .btn-primary{background:#1565c0;color:#fff}.btn-secondary{background:#616161;color:#fff}
+    .btn-danger{background:#c62828;color:#fff}.btn-success{background:#2e7d32;color:#fff}
+    .btn:disabled{opacity:.5;cursor:not-allowed}
+    .msg{padding:10px 14px;border-radius:4px;margin-bottom:16px;font-size:13px}
+    .msg-ok{background:#e8f5e9;border:1px solid #81c784;color:#1b5e20}
+    .msg-warn{background:#fff3e0;border:1px solid #ffb74d;color:#e65100}
+    .msg-err{background:#ffebee;border:1px solid #e57373;color:#b71c1c}
+    form{display:inline}
+    label{display:block;margin-bottom:4px;font-weight:500}
+    input,select{padding:6px 10px;border:1px solid #bbb;border-radius:4px;width:100%;margin-bottom:12px}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  </style>
+</head>
+<body>
+<nav>
+  <a href="/">品类管理</a>
+  <a href="/settings">系统设置</a>
+  <span>广告监控系统 · 第一阶段</span>
+</nav>
+<main>{% block content %}{% endblock %}</main>
+</body>
+</html>

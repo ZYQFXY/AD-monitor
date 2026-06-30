@@ -1,0 +1,18 @@
+# 忽略根目录所有内容
+/*
+
+# 只保留这两个目录和 .gitignore 本身
+!/ad-monitor/
+!/docx/
+!/.gitignore
+
+# ad-monitor 内忽略敏感 / 运行时生成文件
+ad-monitor/.env
+ad-monitor/data.db
+ad-monitor/data.db-shm
+ad-monitor/data.db-wal
+ad-monitor/**/__pycache__/
+ad-monitor/**/*.pyc
+ad-monitor/**/*.pyo
+ad-monitor/.pytest_cache/
+ad-monitor/CONVERSATION_LOG.md

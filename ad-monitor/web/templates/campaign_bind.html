@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+{% block title %}绑定广告活动 - {{ cat.name }}{% endblock %}
+{% block content %}
+<h2>绑定广告活动：{{ cat.name }}</h2>
+<p style="color:#555">绑定后系统只拉取这些 Campaign 下的广告组数据。新建 Campaign 后在此补录即可。</p>
+
+{% if msg == "added" %}<div class="msg msg-ok">Campaign 已绑定</div>
+{% elif msg == "removed" %}<div class="msg msg-warn">绑定已删除</div>{% endif %}
+
+<form method="post" action="/categories/{{ cat.id }}/campaigns" style="display:flex;gap:12px;margin-bottom:20px;align-items:flex-end">
+  <div>
+    <label>平台</label>
+    <select name="platform" style="width:140px">
+      <option value="facebook">Facebook</option>
+      <option value="google">Google</option>
+      <option value="tiktok">TikTok</option>
+    </select>
+  </div>
+  <div>
+    <label>Campaign ID</label>
+    <input name="campaign_id" placeholder="从平台后台复制粘贴" style="width:280px" required>
+  </div>
+  <button class="btn btn-primary" style="height:34px">绑定</button>
+</form>
+
+{% if bindings %}
+<table>
+  <thead><tr><th>平台</th><th>Campaign ID</th><th>绑定时间</th><th>操作</th></tr></thead>
+  <tbody>
+  {% for b in bindings %}
+  <tr>
+    <td>{{ b.platform }}</td>
+    <td><code>{{ b.campaign_id }}</code></td>
+    <td>{{ b.created_at }}</td>
+    <td>
+      <form method="post" action="/categories/{{ cat.id }}/campaigns/{{ b.id }}/delete"
+            onsubmit="return confirm('确认删除该绑定？')">
+        <button class="btn btn-danger">删除</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p style="color:#777">暂无绑定，请添加 Campaign ID。</p>
+{% endif %}
+
+<div style="margin-top:16px">
+  <a href="/categories/{{ cat.id }}/data" class="btn btn-success">查看数据</a>
+  <a href="/" class="btn btn-secondary" style="margin-left:8px">返回列表</a>
+</div>
+{% endblock %}

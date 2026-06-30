@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block title %}品类列表{% endblock %}
+{% block content %}
+<h2>品类列表</h2>
+
+{% if msg == "created" %}<div class="msg msg-ok">品类已创建</div>
+{% elif msg == "updated" %}<div class="msg msg-ok">品类已更新</div>
+{% elif msg == "deleted" %}<div class="msg msg-warn">品类已删除</div>{% endif %}
+
+<a href="/categories/new" class="btn btn-primary" style="margin-bottom:16px">+ 新增品类</a>
+
+{% if categories %}
+<table>
+  <thead><tr>
+    <th>品类</th><th>投手 userid</th><th>设计师 userid</th>
+    <th>ROAS红线</th><th>放量线</th><th>最低消耗触发(¥)</th>
+    <th>CTR红线</th><th>操作</th>
+  </tr></thead>
+  <tbody>
+  {% for c in categories %}
+  <tr>
+    <td>{{ c.name }}</td>
+    <td>{{ c.pitcher_userid }}</td>
+    <td>{{ c.designer_userid or "—" }}</td>
+    <td>{{ c.min_roas }}</td>
+    <td>{{ c.scale_roas }}</td>
+    <td>{{ c.min_spend_trigger }}</td>
+    <td>{{ "%.1f%%"|format(c.ctr_threshold*100) }}</td>
+    <td>
+      <a href="/categories/{{ c.id }}/data" class="btn btn-success">数据</a>
+      <a href="/categories/{{ c.id }}/campaigns" class="btn btn-secondary">绑定</a>
+      <a href="/categories/{{ c.id }}/edit" class="btn btn-primary">编辑</a>
+      <form method="post" action="/categories/{{ c.id }}/delete"
+            onsubmit="return confirm('确认删除品类「{{ c.name }}」？')">
+        <button class="btn btn-danger">删除</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p style="color:#777">暂无品类，点击上方按钮新增。</p>
+{% endif %}
+{% endblock %}
