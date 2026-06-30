@@ -5,6 +5,7 @@
 !/ad-monitor/
 !/docx/
 !/.gitignore
+!/README.md
 
 # ad-monitor 内忽略敏感 / 运行时生成文件
 ad-monitor/.env
